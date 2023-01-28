@@ -121,7 +121,7 @@ menu "Application configuration"
 
 		config BL_GPIO
 			int "HD44780 BL GPIO number"
-			range 0 GPIO_RANGE_MAX
+			range -1 GPIO_RANGE_MAX
 			default -1
 			help
 				GPIO number (IOxx) to HD44780 BL.
