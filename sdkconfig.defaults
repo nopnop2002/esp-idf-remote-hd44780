@@ -1,0 +1,5 @@
+#
+# HTTP Server
+#
+CONFIG_HTTPD_MAX_REQ_HDR_LEN=1024
+
