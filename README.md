@@ -116,5 +116,5 @@ ESP32 3.3V/5V ----------------------LCD A
 # Demo   
 ```
 sudo apt install curl
-bash demo.sh
+bash ./demo.sh
 ```
