@@ -36,8 +36,8 @@ You can use static IP.
 ![config-wifi-3](https://user-images.githubusercontent.com/6020549/215234490-02c33ef4-79f6-4839-91d8-33ba38578964.jpg)
 
 ## Device Setting   
-![config-device](https://user-images.githubusercontent.com/6020549/215236874-f2010efc-c843-4a1f-9420-d485e43e23a7.jpg)
-The initial value is no backlight control.   
+![config-device](https://user-images.githubusercontent.com/6020549/215236874-f2010efc-c843-4a1f-9420-d485e43e23a7.jpg)   
+___The initial value is no backlight control.___   
 
 
 # Wiring
