@@ -26,7 +26,7 @@ idf.py flash
 ![config-top](https://user-images.githubusercontent.com/6020549/215234404-aaf6ba86-282e-4f1a-aa17-8f53c93194e4.jpg)
 ![config-app](https://user-images.githubusercontent.com/6020549/215234407-49bdf156-efe0-459c-a729-1561c8288985.jpg)
 
-- WiFi Setting
+- WiFi Setting   
 ![config-wifi-1](https://user-images.githubusercontent.com/6020549/215234488-b980e32a-96d0-49b7-93dc-c1f476780975.jpg)
 
 You can connect using the mDNS hostname instead of the IP address.   
@@ -35,7 +35,7 @@ You can connect using the mDNS hostname instead of the IP address.
 You can use static IP.   
 ![config-wifi-3](https://user-images.githubusercontent.com/6020549/215234490-02c33ef4-79f6-4839-91d8-33ba38578964.jpg)
 
-- Device Setting
+- Device Setting   
 ![config-device](https://user-images.githubusercontent.com/6020549/215234557-7e48c50d-8d3c-4883-859f-d65775c8300a.jpg)
 
 
@@ -114,4 +114,7 @@ ESP32 3.3V/5V ----------------------LCD A
 
 
 # Demo   
-```bash demo.sh```
+```
+sudo apt install curl
+bash demo.sh
+```
