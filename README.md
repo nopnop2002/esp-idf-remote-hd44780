@@ -1,5 +1,5 @@
 # esp-idf-remote-hd44780
-Control the HD44780 using HTTP.   
+Control the HD44780 using HTTP/MQTT.   
 I use [this](https://github.com/UncleRus/esp-idf-lib) library.   
 It's great work.   
 
