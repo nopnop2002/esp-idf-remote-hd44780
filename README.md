@@ -3,10 +3,7 @@ Control the HD44780 using HTTP.
 I use [this](https://github.com/UncleRus/esp-idf-lib) library.   
 It's great work.   
 
-Using HTTP   
 ![HTTP](https://user-images.githubusercontent.com/6020549/215644607-3bc41fe5-a8d5-4baa-bedf-b8aeda235ee5.JPG)
-
-Using MQTT   
 ![MQTT](https://user-images.githubusercontent.com/6020549/215644778-1413971f-bee6-4505-bb0d-4a343f3149a7.JPG)
 
 
