@@ -9,7 +9,6 @@
 
 #include <stdio.h>
 #include <string.h>
-
 #include "freertos/FreeRTOS.h"
 #include "freertos/task.h"
 #include "freertos/queue.h"
@@ -20,11 +19,13 @@
 #include "esp_http_server.h"
 #include "cJSON.h"
 
-#include "http.h"
+#include "parameter.h"
+
+#if CONFIG_NETWORK_HTTP
 
 static const char *TAG = "HTTP";
 
-extern QueueHandle_t xQueueHttp;
+extern QueueHandle_t xQueueParameter;
 
 #define SCRATCH_BUFSIZE (1024)
 
@@ -132,12 +133,12 @@ static esp_err_t control_handler(httpd_req_t *req)
 	if (parse) {
 		ESP_LOGI(__FUNCTION__, "lcd=%d cursor=%d blink=%d", lcd, cursor, blink);
 		httpd_resp_sendstr(req, "control successfully\n");
-        HTTP_t httpBuf;
-        strcpy(httpBuf.function, "control");
-        httpBuf.lcd = lcd;
-        httpBuf.cursor = cursor;
-        httpBuf.blink = blink;
-        if (xQueueSend(xQueueHttp, &httpBuf, 10) != pdPASS) {
+        PARAMETER_t paramBuf;
+        strcpy(paramBuf.function, "control");
+        paramBuf.lcd = lcd;
+        paramBuf.cursor = cursor;
+        paramBuf.blink = blink;
+        if (xQueueSend(xQueueParameter, &paramBuf, 10) != pdPASS) {
             ESP_LOGE(__FUNCTION__, "xQueueSend fail");
         }
 
@@ -176,9 +177,9 @@ static esp_err_t clear_handler(httpd_req_t *req)
 
 	httpd_resp_sendstr(req, "clear successfully\n");
 
-	HTTP_t httpBuf;
-	strcpy(httpBuf.function, "clear");
-	if (xQueueSend(xQueueHttp, &httpBuf, 10) != pdPASS) {
+	PARAMETER_t paramBuf;
+	strcpy(paramBuf.function, "clear");
+	if (xQueueSend(xQueueParameter, &paramBuf, 10) != pdPASS) {
 		ESP_LOGE(__FUNCTION__, "xQueueSend fail");
 	}
 	return ESP_OK;
@@ -236,11 +237,11 @@ static esp_err_t gotoxy_handler(httpd_req_t *req)
 	if (parse) {
 		ESP_LOGI(__FUNCTION__, "col=%d line=%d", col, line);
 		httpd_resp_sendstr(req, "gotoxy successfully\n");
-		HTTP_t httpBuf;
-		strcpy(httpBuf.function, "gotoxy");
-		httpBuf.col = col;
-		httpBuf.line = line;
-		if (xQueueSend(xQueueHttp, &httpBuf, 10) != pdPASS) {
+		PARAMETER_t paramBuf;
+		strcpy(paramBuf.function, "gotoxy");
+		paramBuf.col = col;
+		paramBuf.line = line;
+		if (xQueueSend(xQueueParameter, &paramBuf, 10) != pdPASS) {
 			ESP_LOGE(__FUNCTION__, "xQueueSend fail");
 		}
 	} else {
@@ -296,10 +297,10 @@ static esp_err_t putc_handler(httpd_req_t *req)
 	if (parse) {
 		ESP_LOGI(__FUNCTION__, "ch=[%c]", ch);
 		httpd_resp_sendstr(req, "putc successfully\n");
-		HTTP_t httpBuf;
-		strcpy(httpBuf.function, "putc");
-		httpBuf.ch = ch;
-		if (xQueueSend(xQueueHttp, &httpBuf, 10) != pdPASS) {
+		PARAMETER_t paramBuf;
+		strcpy(paramBuf.function, "putc");
+		paramBuf.ch = ch;
+		if (xQueueSend(xQueueParameter, &paramBuf, 10) != pdPASS) {
 			ESP_LOGE(__FUNCTION__, "xQueueSend fail");
 		}
 	} else {
@@ -352,10 +353,10 @@ static esp_err_t puts_handler(httpd_req_t *req)
 	if (parse) {
 		ESP_LOGI(__FUNCTION__, "str=[%s]", str);
 		httpd_resp_sendstr(req, "puts successfully\n");
-		HTTP_t httpBuf;
-		strcpy(httpBuf.function, "puts");
-		strcpy(httpBuf.str, str);
-		if (xQueueSend(xQueueHttp, &httpBuf, 10) != pdPASS) {
+		PARAMETER_t paramBuf;
+		strcpy(paramBuf.function, "puts");
+		strcpy(paramBuf.str, str);
+		if (xQueueSend(xQueueParameter, &paramBuf, 10) != pdPASS) {
 			ESP_LOGE(__FUNCTION__, "xQueueSend fail");
 		}
 	} else {
@@ -417,10 +418,10 @@ static esp_err_t backlight_handler(httpd_req_t *req)
 	if (parse) {
 		ESP_LOGI(__FUNCTION__, "backlight=%d", backlight);
 		httpd_resp_sendstr(req, "backlight successfully\n");
-		HTTP_t httpBuf;
-		strcpy(httpBuf.function, "backlight");
-		httpBuf.backlight = backlight;
-		if (xQueueSend(xQueueHttp, &httpBuf, 10) != pdPASS) {
+		PARAMETER_t paramBuf;
+		strcpy(paramBuf.function, "backlight");
+		paramBuf.backlight = backlight;
+		if (xQueueSend(xQueueParameter, &paramBuf, 10) != pdPASS) {
 			ESP_LOGE(__FUNCTION__, "xQueueSend fail");
 		}
 	} else {
@@ -556,3 +557,4 @@ void http_server(void *pvParameters)
 	ESP_LOGI(TAG, "finish");
 	vTaskDelete(NULL);
 }
+#endif

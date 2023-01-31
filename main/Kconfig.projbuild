@@ -63,6 +63,35 @@ menu "Application configuration"
 
 	endmenu
 
+	menu "Network Setting"
+
+		choice NETWORK
+			bool "Select Network protocol"
+			default NETWORK_HTTP
+			help
+				Select Network protocol.
+			config NETWORK_HTTP
+				bool "Use HTTP protocol"
+			config NETWORK_MQTT
+				bool "Use MQTT protocol"
+		endchoice
+
+		config MQTT_BROKER
+			depends on NETWORK_MQTT
+			string "MQTT Broker"
+			default "broker.emqx.io"
+			help
+				Host name or IP address of the broker to connect to.
+
+		config MQTT_SUB_TOPIC
+			depends on NETWORK_MQTT
+			string "Subscribe Topic"
+			default "/api/hd44780/#"
+			help
+				Topic of publish.
+
+	endmenu
+
 	menu "Device Setting"
 
 		config RS_GPIO

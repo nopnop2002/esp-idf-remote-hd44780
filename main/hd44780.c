@@ -7,11 +7,11 @@
 #include "esp_log.h"
 //#include <sys/time.h>
 
-#include <http.h>
+#include <parameter.h>
 #include <hd44780.h>
 #include <esp_idf_lib_helpers.h>
 
-extern QueueHandle_t xQueueHttp;
+extern QueueHandle_t xQueueParameter;
 
 void hd44780(void *pvParameters)
 {
@@ -44,30 +44,58 @@ void hd44780(void *pvParameters)
 
     ESP_ERROR_CHECK(hd44780_init(&lcd));
 
-	HTTP_t httpBuf;
+	PARAMETER_t paramBuf;
+	bool _lcd = true;
+    bool _cursor = false;
+    bool _blink = false;
+    uint8_t _col = 0;
+    uint8_t _line = 0;
+
 	while(1) {
 		// Wait for input
 		ESP_LOGI(pcTaskGetName(0),"Waitting ....");
-		xQueueReceive(xQueueHttp, &httpBuf, portMAX_DELAY);
-		ESP_LOGI(pcTaskGetName(0), "httpBuf.function=[%s]", httpBuf.function);
+		xQueueReceive(xQueueParameter, &paramBuf, portMAX_DELAY);
+		ESP_LOGI(pcTaskGetName(0), "paramBuf.function=[%s]", paramBuf.function);
 	
-		if (strcmp(httpBuf.function, "control") == 0) {
-			ESP_LOGI(pcTaskGetName(0),"control lcd=%d cursor=%d blink=%d", httpBuf.lcd, httpBuf.cursor, httpBuf.blink);
-			hd44780_control(&lcd, httpBuf.lcd, httpBuf.cursor, httpBuf.blink);
-		} else if (strcmp(httpBuf.function, "clear") == 0) {
+		if (strcmp(paramBuf.function, "control") == 0) {
+			ESP_LOGI(pcTaskGetName(0),"control lcd=%d cursor=%d blink=%d", paramBuf.lcd, paramBuf.cursor, paramBuf.blink);
+			hd44780_control(&lcd, paramBuf.lcd, paramBuf.cursor, paramBuf.blink);
+		} else if (strcmp(paramBuf.function, "clear") == 0) {
 			hd44780_clear(&lcd);
-		} else if (strcmp(httpBuf.function, "gotoxy") == 0) {
-			ESP_LOGI(pcTaskGetName(0),"gotoxy col=%d line=%d", httpBuf.col, httpBuf.line);
-			hd44780_gotoxy(&lcd, httpBuf.col, httpBuf.line);
-		} else if (strcmp(httpBuf.function, "putc") == 0) {
-			ESP_LOGI(pcTaskGetName(0),"putc ch=[%c]", httpBuf.ch);
-			hd44780_putc(&lcd, httpBuf.ch);
-		} else if (strcmp(httpBuf.function, "puts") == 0) {
-			ESP_LOGI(pcTaskGetName(0),"puts str=[%s]", httpBuf.str);
-			hd44780_puts(&lcd, httpBuf.str);
-		} else if (strcmp(httpBuf.function, "backlight") == 0) {
-			ESP_LOGI(pcTaskGetName(0),"backlight backlight=%d", httpBuf.backlight);
-			hd44780_switch_backlight(&lcd, httpBuf.backlight);
+		} else if (strcmp(paramBuf.function, "gotoxy") == 0) {
+			ESP_LOGI(pcTaskGetName(0),"gotoxy col=%d line=%d", paramBuf.col, paramBuf.line);
+			hd44780_gotoxy(&lcd, paramBuf.col, paramBuf.line);
+		} else if (strcmp(paramBuf.function, "putc") == 0) {
+			ESP_LOGI(pcTaskGetName(0),"putc ch=[%c]", paramBuf.ch);
+			hd44780_putc(&lcd, paramBuf.ch);
+		} else if (strcmp(paramBuf.function, "puts") == 0) {
+			ESP_LOGI(pcTaskGetName(0),"puts str=[%s]", paramBuf.str);
+			hd44780_puts(&lcd, paramBuf.str);
+		} else if (strcmp(paramBuf.function, "backlight") == 0) {
+			ESP_LOGI(pcTaskGetName(0),"backlight backlight=%d", paramBuf.backlight);
+			if (CONFIG_BL_GPIO != -1) {
+				ESP_LOGW(pcTaskGetName(0),"Backlight control disabled");
+			} else {
+				hd44780_switch_backlight(&lcd, paramBuf.backlight);
+			}
+		} else if (strcmp(paramBuf.function, "col") == 0) {
+			ESP_LOGI(pcTaskGetName(0),"col=%d", paramBuf.col);
+			_col = paramBuf.col;
+			ESP_LOGI(pcTaskGetName(0),"_col=%d _line=%d", _col, _line);
+			hd44780_gotoxy(&lcd, _col, _line);
+		} else if (strcmp(paramBuf.function, "line") == 0) {
+			ESP_LOGI(pcTaskGetName(0),"line=%d", paramBuf.line);
+			_line = paramBuf.line;
+			ESP_LOGI(pcTaskGetName(0),"_col=%d _line=%d", _col, _line);
+			hd44780_gotoxy(&lcd, _col, _line);
+		} else if (strcmp(paramBuf.function, "cursor") == 0) {
+			_cursor = paramBuf.cursor;
+			ESP_LOGI(pcTaskGetName(0),"_lcd=%d _cursor=%d _blink=%d", _lcd, _cursor, _blink);
+			hd44780_control(&lcd, _lcd, _cursor, _blink);
+		} else if (strcmp(paramBuf.function, "blink") == 0) {
+			_blink = paramBuf.blink;
+			ESP_LOGI(pcTaskGetName(0),"_lcd=%d _cursor=%d _blink=%d", _lcd, _cursor, _blink);
+			hd44780_control(&lcd, _lcd, _cursor, _blink);
 		}
 	}
 

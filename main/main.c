@@ -21,7 +21,7 @@
 #include "esp_log.h"
 #include "nvs_flash.h"
 
-#include <http.h>
+#include <parameter.h>
 #include <hd44780.h>
 #include <esp_idf_lib_helpers.h>
 
@@ -38,7 +38,7 @@ static const char *TAG = "MAIN";
 
 static int s_retry_num = 0;
 
-QueueHandle_t xQueueHttp;
+QueueHandle_t xQueueParameter;
 
 static void event_handler(void* arg, esp_event_base_t event_base, int32_t event_id, void* event_data)
 {
@@ -160,8 +160,12 @@ void initialise_mdns(void)
 #endif
 }
 
-
+#if CONFIG_NETWORK_HTTP
 void http_server(void *pvParameters);
+#endif
+#if CONFIG_NETWORK_MQTT
+void mqtt(void *pvParameters);
+#endif
 void hd44780(void *pvParameters);
 
 void app_main()
@@ -182,9 +186,10 @@ void app_main()
 	initialise_mdns();
 
 	// Create Queue
-	xQueueHttp = xQueueCreate( 10, sizeof(HTTP_t) );
-	configASSERT( xQueueHttp );
+	xQueueParameter = xQueueCreate( 10, sizeof(PARAMETER_t) );
+	configASSERT( xQueueParameter );
 
+#if CONFIG_NETWORK_HTTP
 	/* Get the local IP address */
 	esp_netif_ip_info_t ip_info;
 	ESP_ERROR_CHECK(esp_netif_get_ip_info(esp_netif_get_handle_from_ifkey("WIFI_STA_DEF"), &ip_info));
@@ -193,6 +198,12 @@ void app_main()
 
 	// Start task
 	xTaskCreate(http_server, "HTTP", 1024*4, (void *)cparam0, 2, NULL);
+#endif
+
+#if CONFIG_NETWORK_MQTT
+	xTaskCreate(mqtt, "MQTT", 1024*4, NULL, 2, NULL);
+#endif
+
 	xTaskCreate(hd44780, "HD44780", 1024*3, NULL, 5, NULL);
 
 	// Wait for the task to start, because cparam0 is discarded.

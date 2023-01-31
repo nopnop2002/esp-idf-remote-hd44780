@@ -3,6 +3,8 @@
 
 curl -X POST -H "Content-Type: application/json" http://esp32-server.local:8080/api/clear
 
+curl -X POST -H "Content-Type: application/json" -d '{"lcd":"on", "cursor":"off", "blink":"off"}' http://esp32-server.local:8080/api/control
+
 curl -X POST -H "Content-Type: application/json" -d '{"col":0, "line":0}' http://esp32-server.local:8080/api/gotoxy
 
 curl -X POST -H "Content-Type: application/json" -d '{"str":"Hello World!!"}' http://esp32-server.local:8080/api/puts
@@ -10,6 +12,8 @@ curl -X POST -H "Content-Type: application/json" -d '{"str":"Hello World!!"}' ht
 curl -X POST -H "Content-Type: application/json" -d '{"col":0, "line":1}' http://esp32-server.local:8080/api/gotoxy
 
 curl -X POST -H "Content-Type: application/json" -d '{"str":"Hello World!!"}' http://esp32-server.local:8080/api/puts
+
+curl -X POST -H "Content-Type: application/json" -d '{"col":0, "line":1}' http://esp32-server.local:8080/api/gotoxy
 
 curl -X POST -H "Content-Type: application/json" -d '{"lcd":"on", "cursor":"on", "blink":"on"}' http://esp32-server.local:8080/api/control
 

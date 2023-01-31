@@ -8,5 +8,5 @@ typedef struct {
 	char ch;
 	char str[64];
 	bool backlight;
-} HTTP_t;
+} PARAMETER_t;
 
